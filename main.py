@@ -113,10 +113,58 @@ class JsonSearch(object):
         if isinstance(self.search_value, str) is not True:
             raise ValueError("search_value must be of type str")
         self.type_search = self.type_search.upper()
-        if self.type_search not in ("TAG", "KEY"):
-            raise ValueError("type_search must be equal to tag or key")
+        if self.type_search not in ("KEY", "VALUE"):
+            raise ValueError("type_search must be equal to key or value")
 
+    def key_search(self, *, json_obj: json, result_lst: list = None, key: str) -> list:
+        """Поиск в json по ключу"""
+        if result_lst is None:
+            result_lst = []
+        if isinstance(json_obj, list):
+            for item in json_obj:
+                self.key_search(json_obj=item, result_lst=result_lst, key=key)
+        if isinstance(json_obj, dict):
+            for item_key in json_obj.keys():
+                value = json_obj[item_key]
+                if str(item_key).lower() == key.lower():
+                    result_lst.append(value)
+                else:
+                    self.key_search(json_obj=value, result_lst=result_lst, key=key)
+        return result_lst
 
+    def value_search(self, *, json_obj: json, result_lst: list = None, value: str) -> list:
+        """Поиск в json по значению"""
+        if result_lst is None:
+            result_lst = []
+        if isinstance(json_obj, list):
+            for item in json_obj:
+                self.value_search(json_obj=item, result_lst=result_lst, value=value)
+        if isinstance(json_obj, dict):
+            for item_value in json_obj.values():
+                if str(item_value).lower() == value.lower():
+                    result_lst.append(value)
+                else:
+                    self.value_search(json_obj=item_value, result_lst=result_lst, value=value)
+        return result_lst
+
+    def start_search(self) -> dict:
+        """Функция читает файлы и запускает функцию парсинга"""
+        result = {}
+        files_error = []
+        for file_path in self.files_path:
+            try:
+                with open(file_path, 'r', encoding='utf-8') as json_file:
+                    json_obj = json.load(json_file)
+                    if self.type_search == 'KEY':
+                        result_search = self.key_search(json_obj=json_obj, key=self.search_value)
+                    elif self.type_search == 'VALUE':
+                        result_search = self.value_search(json_obj=json_obj, value=self.search_value)
+                    if result_search:
+                        result.update({file_path: len(result_search)})
+            except json.JSONDecodeError or TypeError:
+                files_error.append(file_path)
+        result.update({"files_error": files_error})
+        return result
 
 
 def main():
