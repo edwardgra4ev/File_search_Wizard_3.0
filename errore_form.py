@@ -1,5 +1,5 @@
-from PySide6.QtCore import (QCoreApplication, QMetaObject)
-from PySide6.QtWidgets import (QTextBrowser, QVBoxLayout)
+from PyQt5.QtCore import (QCoreApplication, QMetaObject)
+from PyQt5.QtWidgets import (QTextBrowser, QVBoxLayout)
 
 
 class Error(object):
