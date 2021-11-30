@@ -65,11 +65,12 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
         try:
             select = self.listWidget_2.selectedIndexes()[0].data()
             path = re.search(r"Файл : (.+)\n", select).group(1)
+            path = path.replace('/', '\\')
         except IndexError:
             return
         try:
             if sys.platform == 'win32':
-                subprocess.check_call(["explorer.exe", "/Select", f'"{path}"'])
+                os.system(f'explorer /select, "{path}"')
         except OSError:
             self.widget_error = ShowError(text='Неудалось открыть выбранный файл',
                                           title='Ошибка открытия файла')
@@ -108,7 +109,7 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
 
     def director(self):
         """Функция выбора директории"""
-        self.path = QFileDialog.getExistingDirectory(self, 'Directory selection', str(os.getcwdb()))
+        self.path = QFileDialog.getExistingDirectory(self, 'Directory selection')
 
     def group_box_setting_is_checked(self):
         """Скрытие или отображение stackedWidget"""
