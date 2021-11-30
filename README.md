@@ -2,6 +2,8 @@
 Приложение на python с использованием [PyQt5](https://pypi.org/project/PyQt5/) и 
 [qt-material](https://github.com/UN-GCPDS/qt-material).
 Разработано для поиска файлов по содержимому. 
+[Скачать](https://github.com/edwardgra4ev/File_search_Wizard_3.0/releases/tag/1.0.0).
+
 
 
 ![Image alt](https://github.com/edwardgra4ev/File_search_Wizard_3.0/blob/master/File_search_Wizard_3.png?raw=true)
