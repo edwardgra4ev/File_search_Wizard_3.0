@@ -1,5 +1,5 @@
 import sys
-from typing import Optional
+import subprocess
 import gui
 import errore_form
 import json
@@ -30,6 +30,51 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
         self.radioButton_standard_no_str.clicked.connect(self.radio_button_full_search_is_clicked)
         self.pushButton_directory.clicked.connect(self.director)
         self.pushButton_search.clicked.connect(self.run_search)
+        self.listWidget_2.itemDoubleClicked.connect(self.open_file)
+
+    def keyPressEvent(self, event):
+        if event.key() in [QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return]:
+            self.run_search()
+        # строка поиска
+        elif event.key() in [QtCore.Qt.Key_F1]:
+            self.lineEdit.setFocus()
+        # выбор дерриктории
+        elif event.key() in [QtCore.Qt.Key_F2]:
+            self.director()
+        elif event.key() in [QtCore.Qt.Key_F3]:
+            self.select_file()
+
+    def open_file(self):
+        try:
+            select = self.listWidget_2.selectedIndexes()[0].data()
+            path = re.search(r"Файл : (.+)\n", select).group(1)
+        except IndexError:
+            return
+        try:
+            if sys.platform == 'linux':
+                subprocess.check_call(["xdg-open", "--", path])
+            elif sys.platform == 'win32':
+                subprocess.check_call(["notepad.exe", path])
+        except OSError:
+            self.widget_error = ShowError(text='Неудалось открыть выбранный файл',
+                                          title='Ошибка открытия файла')
+            self.widget_error.show()
+            return
+
+    def select_file(self):
+        try:
+            select = self.listWidget_2.selectedIndexes()[0].data()
+            path = re.search(r"Файл : (.+)\n", select).group(1)
+        except IndexError:
+            return
+        try:
+            if sys.platform == 'win32':
+                subprocess.check_call(["explorer.exe", "/Select", f'"{path}"'])
+        except OSError:
+            self.widget_error = ShowError(text='Неудалось открыть выбранный файл',
+                                          title='Ошибка открытия файла')
+            self.widget_error.show()
+            return
 
     def radio_button_line_search_is_clicked(self):
         """Если  установлен построчный поиск включаем доступные варианты"""
@@ -336,7 +381,10 @@ class SearchForFileInTheDirectory(object):
 
     def _getting_file_path(self) -> tuple:
         """Получаем все файлы в нужной дерриктории"""
-        file_list = os.listdir(self.path)  # получение списка файлов
+        try:
+            file_list = os.listdir(self.path)  # получение списка файлов
+        except FileNotFoundError:
+            return ()
         file_list = [os.path.join(self.path, i) for i in file_list]
         file_list = sorted(file_list, key=os.path.getmtime)  # Сортировка списка
         file_list.reverse()  # Переворачивание списка
