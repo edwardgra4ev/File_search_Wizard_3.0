@@ -4,7 +4,7 @@
 Разработано для поиска файлов по содержимому. 
 
 
-![Image alt](img.png)
+![Image alt](https://github.com/edwardgra4ev/File_search_Wizard_3.0/blob/master/File_search_Wizard_3.png?raw=true)
 
 ## Горячии клавиши
 
