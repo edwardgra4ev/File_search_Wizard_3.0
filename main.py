@@ -30,7 +30,18 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
         self.radioButton_standard_no_str.clicked.connect(self.radio_button_full_search_is_clicked)
         self.pushButton_directory.clicked.connect(self.director)
         self.pushButton_search.clicked.connect(self.run_search)
-        self.listWidget_2.itemDoubleClicked.connect(self.open_file)
+        self.listWidget_2.viewport().installEventFilter(self)
+        self.result_search = None
+
+    def eventFilter(self, source, event):
+        if event.type() == QtCore.QEvent.MouseButtonDblClick:
+            if event.button() == QtCore.Qt.LeftButton:
+                self.open_file()
+            elif event.button() == QtCore.Qt.RightButton:
+                self.select_file()
+            elif event.button() == QtCore.Qt.MidButton:
+                self.show_text()
+        return super().eventFilter(source, event)
 
     def keyPressEvent(self, event):
         if event.key() in [QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return]:
@@ -42,12 +53,35 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
         elif event.key() in [QtCore.Qt.Key_F2]:
             self.director()
         elif event.key() in [QtCore.Qt.Key_F3]:
+            self.open_file()
+        elif event.key() in [QtCore.Qt.Key_F4]:
+            self.show_text()
+        elif event.key() in [QtCore.Qt.Key_F5]:
             self.select_file()
 
-    def open_file(self):
+    def show_text(self):
         try:
             select = self.listWidget_2.selectedIndexes()[0].data()
-            path = re.search(r"Файл : (.+)\n", select).group(1)
+            path = re.search(r"Файл : (.+)\n", select).group(1).strip()
+            text = self.result_search.get(path)
+            if text is None:
+                return
+            text = '\n'.join(text)
+        except IndexError or AttributeError:
+            return
+        self.widget_error = ShowError(text=text,
+                                      title='Вывод результата')
+        self.widget_error.show()
+        return
+
+    def open_file(self):
+        """
+        Открывает выбраный файл в notepad.exe для Windows
+        Или через xdg-open для Linux
+        """
+        try:
+            select = self.listWidget_2.selectedIndexes()[0].data()
+            path = re.search(r"Файл : (.+)\n", select).group(1).strip()
         except IndexError:
             return
         try:
@@ -62,9 +96,14 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
             return
 
     def select_file(self):
+        """
+        Открыввает проводник и выделяет выбранный файл.
+        Работает только на Windows
+        """
+
         try:
             select = self.listWidget_2.selectedIndexes()[0].data()
-            path = re.search(r"Файл : (.+)\n", select).group(1)
+            path = re.search(r"Файл : (.+)\n", select).group(1).strip()
             path = path.replace('/', '\\')
         except IndexError:
             return
@@ -126,6 +165,15 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
             self.stackedWidget.setCurrentIndex(1)
 
     def collection_of_data_for_standard_search(self):
+        """
+        Функция валидации при старте стандартного поиска.
+        Проверяет что строка поиска болье 3.
+        Выбрана директория поиска.
+        Поиск по дате модификации файла.
+        Поиск с учетом имени файла.
+        Типы файлов которые ищем.
+        Тип чтения файла.
+        """
         search_text = self.lineEdit.text()
         if len(search_text) < 3:
             self.widget_error = ShowError(text='Строка поиска не должна содержать менее 3х символов!',
@@ -194,6 +242,15 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
         return file_search_setting
 
     def collection_of_data_for_xml_or_json_search(self):
+        """
+        Функция валидации при старте поиска XML или JSON.
+        Проверяет что строка поиска болье 3.
+        Выбрана директория поиска.
+        Поиск по дате модификации файла.
+        Поиск с учетом имени файла.
+        Типы файлов которые ищем.
+        Тип чтения файла.
+        """
         search_text = self.lineEdit.text()
         if len(search_text) < 3:
             self.widget_error = ShowError(text='Строка поиска не должна содержать менее 3х символов!',
@@ -254,6 +311,7 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
         return file_search_setting
 
     def standard_run(self):
+        """Функция запуска стандартного поиска."""
         if file_search_setting := self.collection_of_data_for_standard_search():
             files = SearchForFileInTheDirectory(path=self.path, file_search_setting=file_search_setting).files
             if files == ():
@@ -286,6 +344,7 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
                 self.thread.quit()
 
     def json_run(self):
+        """Функция запуска поиска по JSON"""
         if file_search_setting := self.collection_of_data_for_xml_or_json_search():
             files = SearchForFileInTheDirectory(path=self.path, file_search_setting=file_search_setting).files
             if files == ():
@@ -302,6 +361,7 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
                            type_search=file_search_setting.get('entirely_read')).start_search())
 
     def xml_run(self):
+        """Функция запуска поиска по XML"""
         if file_search_setting := self.collection_of_data_for_xml_or_json_search():
             files = SearchForFileInTheDirectory(path=self.path, file_search_setting=file_search_setting).files
             if files == ():
@@ -318,6 +378,7 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
                                        type_search=file_search_setting.get('entirely_read')).start_search())
 
     def run_search(self):
+        """Функция запуска поиска которая запускает функцию поиска по типу"""
         self.progressBar.setValue(0)
         self.listWidget_2.clear()
         if self.radioButton_standard.isChecked() is True:
@@ -328,23 +389,32 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
             self.json_run()
 
     def add_result_to_widget_list(self, data) -> None:
+        """Добавление полученного результата в ListWidget"""
         if data == {'files_error': []}:
             self.widget_error = ShowError(text='Нет результатов в соотвествии с критериями поиска!',
                                           title='Результат выполнения')
             self.widget_error.show()
             return
         if self.radioButton_standard.isChecked() is True:
+            self.result_search = {}
             for key, value in data.items():
                 if key != 'files_error':
                     lst = ["╔═══════════════════════════════════════════• ✤ •═══════════════════════════════════════════╗\n"]
                     if self.checkBox_standard_path.isChecked() is True:
-                        lst.append(f" Файл : {key}\n")
+                        lst.append(" Файл : %s \n" % key)
                     if self.checkBox_standard_count.isChecked() is True:
-                        lst.append(f" Кол-во повторений искомого текста : {value[0]}\n")
+                        lst.append(" Кол-во повторений искомого текста : %s \n" % value[0])
                     if self.checkBox_standard_search_str.isChecked() is True:
-                        lst.append(f" Строка с искомым текстом : {value[1]}\n")
+                        if value[0] > 1:
+                            lst.append(f" Строка с искомым текстом : {value[1][0]} и еще "
+                                       f"{len(value[1][1:-1])} вариантов.\n")
+                        else:
+                            lst.append(f" Строка с искомым текстом : {value[1][0]} \n")
+                        self.result_search.update({key: value[1]})
                     lst.append("╚═════════════════════════════════════════════════════════════════════════════════════════╝")
-                    self.listWidget_2.addItem("".join(lst))
+                    item = QtWidgets.QListWidgetItem()
+                    item.setText("".join(lst))
+                    self.listWidget_2.addItem(item)
         if self.radioButton_xml.isChecked() is True or self.radioButton_json.isChecked() is True:
             for key, value in data.items():
                 if key != 'files_error':
@@ -366,6 +436,7 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
 
 
 class ShowError(QtWidgets.QWidget, errore_form.Error):
+    """Класс вывода сообщения об ошибке пользователю"""
     def __init__(self, title: str, text: str, *args, **kwargs):
         QtWidgets.QWidget.__init__(self, *args, **kwargs)
         self.setupUi(self)
@@ -477,7 +548,7 @@ class JsonSearch(object):
                     self._value_search(json_obj=item_value, result_lst=result_lst, value=value)
         return result_lst
 
-    async def start_search(self) -> dict:
+    async def start_search(self) -> None:
         """Функция читает файлы и запускает функцию парсинга"""
         result = {}
         files_error = []
@@ -551,7 +622,7 @@ class SearchingTextForFile(object):
             return 1
         return 0
 
-    def start_search(self) -> dict:
+    def start_search(self) -> None:
         """Функция читает файлы и запускает функцию парсинга"""
         result = {}
         files_error = []
@@ -618,7 +689,7 @@ class XMLSearch(object):
                 self._value_search(root=children, result_lst=result_lst, value=value)
         return result_lst
 
-    async def start_search(self) -> dict:
+    async def start_search(self) -> None:
         """Функция читает файлы и запускает функцию парсинга"""
         result = {}
         files_error = []
