@@ -1,4 +1,4 @@
-# File Search Wizard 3
+# File search Wizard 3.0
 Приложение на python с использованием [PyQt5](https://pypi.org/project/PyQt5/) и 
 [qt-material](https://github.com/UN-GCPDS/qt-material).
 Разработано для поиска файлов по содержимому. 
