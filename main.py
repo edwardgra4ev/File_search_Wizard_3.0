@@ -411,6 +411,9 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
                         else:
                             lst.append(f" Строка с искомым текстом : {value[1][0]} \n")
                         self.result_search.update({key: value[1]})
+                    if self.checkBox_standard_display_modification_date.isChecked() is True:
+                        modification_date = SearchForFileInTheDirectory.get_modification_date(key)
+                        lst.append(f" Дата модифицаии файла : {modification_date} \n")
                     lst.append("╚═════════════════════════════════════════════════════════════════════════════════════════╝")
                     item = QtWidgets.QListWidgetItem()
                     item.setText("".join(lst))
@@ -424,6 +427,9 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
                         lst.append(f" Файл : {key}\n")
                     if self.checkBox_count.isChecked() is True:
                         lst.append(f" Кол-во повторений искомого текста : {value}\n")
+                    if self.checkBox_display_modification_date.isChecked() is True:
+                        modification_date = SearchForFileInTheDirectory.get_modification_date(key)
+                        lst.append(f" Дата модифицаии файла : {modification_date} \n")
                     lst.append(
                         "╚═════════════════════════════════════════════════════════════════════════════════════════╝")
                     self.listWidget_2.addItem("".join(lst))
@@ -503,6 +509,10 @@ class SearchForFileInTheDirectory(object):
             if file_date[:10] == new_date:
                 files.append(file)
         return tuple(files)
+
+    @staticmethod
+    def get_modification_date(patch_file: str) -> datetime:
+        return datetime.datetime.fromtimestamp(os.path.getmtime(patch_file))
 
 
 class JsonSearch(object):
