@@ -411,6 +411,8 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
                         else:
                             lst.append(f" Строка с искомым текстом : {value[1][0]} \n")
                         self.result_search.update({key: value[1]})
+                    if self.checkBox_standard_display_modification_date.isChecked() is True:
+                        lst.append(f" Дата модификаии файла : {SearchForFileInTheDirectory.get_date_modification(key)} \n")
                     lst.append("╚═════════════════════════════════════════════════════════════════════════════════════════╝")
                     item = QtWidgets.QListWidgetItem()
                     item.setText("".join(lst))
@@ -424,13 +426,16 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
                         lst.append(f" Файл : {key}\n")
                     if self.checkBox_count.isChecked() is True:
                         lst.append(f" Кол-во повторений искомого текста : {value}\n")
+                    if self.checkBox_display_modification_date.isChecked() is True:
+                        lst.append(
+                            f" Дата модификаии файла : {SearchForFileInTheDirectory.get_date_modification(key)} \n")
                     lst.append(
                         "╚═════════════════════════════════════════════════════════════════════════════════════════╝")
                     self.listWidget_2.addItem("".join(lst))
         if len(data.get("files_error")) > 0:
             self.listWidget_2.addItem(
                 f"╔═══════════════════════════════════════════• ✤ •═══════════════════════════════════════════╗\n"
-                f"Неудалось прочесть следующие файлы: {data.get('files_error')}\n"
+                f" Неудалось прочесть следующие файлы: {data.get('files_error')}\n"
                 f"╚═════════════════════════════════════════════════════════════════════════════════════════╝"
             )
 
@@ -504,6 +509,9 @@ class SearchForFileInTheDirectory(object):
                 files.append(file)
         return tuple(files)
 
+    @staticmethod
+    def get_date_modification(file_patch) -> datetime:
+        return datetime.datetime.fromtimestamp(os.path.getmtime(file_patch))
 
 class JsonSearch(object):
     """
