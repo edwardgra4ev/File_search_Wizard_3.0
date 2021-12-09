@@ -11,6 +11,8 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QFileDialog
 from qt_material import apply_stylesheet
 import asyncio
+import update_gui
+import requests
 
 
 class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
@@ -440,6 +442,89 @@ class ExampleApp(QtWidgets.QMainWindow, gui.Ui_MainWindow):
             )
 
 
+class UpdateForm(QtWidgets.QMainWindow, update_gui.UI_Form):
+    def __init__(self):
+        super().__init__()
+        self.update = Update()
+        self.update.check_new_version(gui.CONSTANT_VERSION)
+        self.setupUi(self)
+        self.progressBar.hide()
+        self.textBrowser.setText(f"Доступна новая версия приложения: { self.update.new_version}\n"
+                                 f"Список изменений:\n{ self.update.body}")
+        self.pushButton.clicked.connect(self._exit_window)
+        self.pushButton_2.clicked.connect(self._updates)
+
+    def _exit_window(self):
+        self.close()
+
+    def _updates(self):
+        self.progressBar.show()
+        self.progressBar.setValue(0)
+        self.update._rename_file()
+        self.update._download_new_version(self.progressBar)
+        os.startfile("File_search_Wizard_3.0.exe")
+        sys.exit(1)
+
+
+class Update:
+    def __init__(self):
+        self.URL_RELEASES_LATEST = "https://api.github.com/repos/edwardgra4ev/File_search_Wizard_3.0/releases/latest"
+        self.current_version = None
+        self.new_version = None
+        self.name = None
+        self.url = None
+        self.body = None
+
+    def _get_releases_latest_on_github(self) -> json or None:
+        """Првоеряем последний релиз на GitHub"""
+        r = requests.get(url=self.URL_RELEASES_LATEST)
+        if r.status_code == 200:
+            return r.json()
+
+    def _version_comparison(self) -> bool:
+        """Сравниваем текущую версию и новую"""
+        current_version_lst = self.current_version.split('.')
+        new_version_lst = self.new_version.split('.')
+        if current_version_lst == new_version_lst:
+            return False
+        if int(current_version_lst[0]) > int(new_version_lst[0]):
+            return False
+        elif int(current_version_lst[1]) > int(new_version_lst[1]):
+            return False
+        elif int(current_version_lst[2]) > int(new_version_lst[2]):
+            return False
+        else:
+            return True
+
+    def _rename_file(self):
+        os.rename(self.name, "File_search_Wizard_3.0_OLD_VERSION.exe")
+
+    def _download_new_version(self, progress) -> bool or None:
+        """Скачиваем новую версию"""
+        with requests.get(self.url, stream=True) as r:
+            r.raise_for_status()
+            size_file = int(r.headers['Content-length'])
+            progress.setMaximum(size_file)
+            with open(self.name, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=1048576):
+                    f.write(chunk)
+                    progress.setValue(progress.value() + sys.getsizeof(chunk))
+                progress.setValue(size_file)
+                return True
+
+    def dell_file(self):
+        os.remove('File_search_Wizard_3.0_OLD_VERSION.exe')
+
+    def check_new_version(self, current_version: str):
+        self.current_version = current_version
+        json_obj = self._get_releases_latest_on_github()
+        self.new_version = json_obj["tag_name"]
+        self.name = json_obj["assets"][0]["name"]
+        self.url = json_obj["assets"][0]["browser_download_url"]
+        self.body = json_obj["body"]
+        return self._version_comparison()
+
+
 class ShowError(QtWidgets.QWidget, errore_form.Error):
     """Класс вывода сообщения об ошибке пользователю"""
     def __init__(self, title: str, text: str, *args, **kwargs):
@@ -512,6 +597,7 @@ class SearchForFileInTheDirectory(object):
     @staticmethod
     def get_date_modification(file_patch) -> datetime:
         return datetime.datetime.fromtimestamp(os.path.getmtime(file_patch))
+
 
 class JsonSearch(object):
     """
@@ -724,6 +810,15 @@ def main():
     window = ExampleApp()  # Создаём объект класса ExampleApp
     apply_stylesheet(app, theme='dark_teal.xml')
     window.show()  # Показываем окно
+    update = Update()
+    if os.path.isfile("File_search_Wizard_3.0_OLD_VERSION.exe") is True:
+        update.dell_file()
+    try:
+        if update.check_new_version(gui.CONSTANT_VERSION) is True:
+            update_form = UpdateForm()
+            update_form.show()
+    except:
+        pass
     app.exec_()  # и запускаем приложение
 
 
