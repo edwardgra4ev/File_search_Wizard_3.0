@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'ui.ui'
+## Form generated from reading UI file 'gui.gui'
 ##
 ## Created by: Qt User Interface Compiler version 6.2.1
 ##
@@ -16,7 +16,6 @@ from PyQt5.QtWidgets import (QCheckBox, QDateEdit, QFormLayout,
     QRadioButton, QScrollArea, QSizePolicy, QSpacerItem,
     QStackedWidget, QStatusBar, QVBoxLayout, QWidget)
 
-CONSTANT_VERSION = "1.1.1"
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -368,7 +367,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addLayout(self.verticalLayout_4)
         self.version = QLabel("version")
         self.version.setAlignment(Qt.AlignCenter)
-        self.version.setText("Версия: %s" % CONSTANT_VERSION)
         self.verticalLayout_3.addWidget(self.version)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
