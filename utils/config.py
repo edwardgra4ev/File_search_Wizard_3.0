@@ -1,5 +1,5 @@
 
 
 THEMES = 'dark_teal.xml'
-CONSTANT_VERSION = '1.1.3'
+CONSTANT_VERSION = '1.1.4'
 LIMIT_SECOND = 3600

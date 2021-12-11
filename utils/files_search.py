@@ -1,6 +1,7 @@
 import os
 import re
 import datetime
+from typing import Optional
 
 
 class SearchForFileInTheDirectory(object):
@@ -10,16 +11,39 @@ class SearchForFileInTheDirectory(object):
         self.file_search_setting = file_search_setting
         self.files = self.create_files_tuple()
 
+    def _get_all_dir(self, path: str, dir_lst: Optional[list] = None):
+        """Рекурсивый поиск всех дирректорий"""
+        if dir_lst is None:
+            dir_lst = [path]
+        with os.scandir(path) as it:
+            for entry in it:
+                if not entry.name.startswith('.') and entry.is_dir():
+                    new_path = entry.path
+                    dir_lst.append(new_path)
+                    self._get_all_dir(new_path, dir_lst)
+        return dir_lst
+
     def _getting_file_path(self) -> tuple:
         """Получаем все файлы в нужной дерриктории"""
         try:
-            file_list = os.listdir(self.path)
+            file_list = []
+            if self.file_search_setting.get("recursion") is True:
+                path_lst = self._get_all_dir(self.path)
+                for path in path_lst:
+                    with os.scandir(path) as it:
+                        for entry in it:
+                            if not entry.name.startswith('.') and entry.is_file():
+                                file_list.append(entry.path)
+            else:
+                with os.scandir(self.path) as it:
+                    for entry in it:
+                        if not entry.name.startswith('.') and entry.is_file():
+                            file_list.append(entry.path)
+            file_list = sorted(file_list, key=os.path.getmtime)
+            file_list.reverse()
+            return tuple(file_list)
         except FileNotFoundError:
             return ()
-        file_list = [os.path.join(self.path, i) for i in file_list]
-        file_list = sorted(file_list, key=os.path.getmtime)  # Сортировка списка
-        file_list.reverse()  # Переворачивание списка
-        return tuple(file_list)
 
     def _filtering_files_by_format(self) -> dict:
         """Ищем файлы с нужным расширением и создаем словарь {файл: дата модификации}"""
