@@ -1,8 +1,8 @@
 from PyQt5 import QtWidgets, QtCore
-from gui import errore_form
+from gui import error_gui
 
 
-class ShowError(QtWidgets.QWidget, errore_form.Error):
+class ShowError(QtWidgets.QWidget, error_gui.Error):
     """Класс вывода сообщения об ошибке пользователю"""
     def __init__(self, title: str, text: str, *args, **kwargs):
         QtWidgets.QWidget.__init__(self, *args, **kwargs)

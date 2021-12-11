@@ -1,5 +1,7 @@
 from PyQt5.QtCore import (QCoreApplication, QMetaObject)
 from PyQt5.QtWidgets import (QTextBrowser, QVBoxLayout)
+from PyQt5.QtGui import QIcon
+import icon
 
 
 class Error(object):
@@ -7,6 +9,7 @@ class Error(object):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(400, 150)
+        self.setWindowIcon(QIcon(':/icon/icon.ico'))
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout_2 = QVBoxLayout()

@@ -9,12 +9,14 @@
 ################################################################################
 
 from PyQt5.QtCore import (QCoreApplication, QMetaObject, QRect, Qt, QDate)
-
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QCheckBox, QDateEdit, QFormLayout,
     QGridLayout, QGroupBox, QHBoxLayout, QLabel,
     QLayout, QLineEdit, QListWidget, QMenuBar, QProgressBar, QPushButton,
     QRadioButton, QScrollArea, QSizePolicy, QSpacerItem,
     QStackedWidget, QStatusBar, QVBoxLayout, QWidget)
+import icon
+
 
 
 class Ui_MainWindow(object):
@@ -22,6 +24,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1037, 1129)
+        self.setWindowIcon(QIcon(':/icon/icon.ico'))
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_3 = QVBoxLayout(self.centralwidget)

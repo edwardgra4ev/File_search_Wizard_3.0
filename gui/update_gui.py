@@ -9,12 +9,15 @@
 
 
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtGui import QIcon
+import icon
 
 
 class UI_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("MainWindow")
         Form.resize(713, 361)
+        self.setWindowIcon(QIcon(':/icon/icon.ico'))
         self.centralwidget = QtWidgets.QWidget(Form)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)

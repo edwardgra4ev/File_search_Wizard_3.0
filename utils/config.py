@@ -1,0 +1,5 @@
+
+
+THEMES = 'dark_teal.xml'
+CONSTANT_VERSION = '1.1.3'
+LIMIT_SECOND = 3600

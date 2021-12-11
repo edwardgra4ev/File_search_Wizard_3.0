@@ -50,9 +50,6 @@ class Update:
                 progress.setValue(size_file)
                 return True
 
-    def dell_file(self):
-        os.remove('File_search_Wizard_3.0_OLD_VERSION.exe')
-
     def check_new_version(self, current_version: str):
         self.current_version = current_version
         json_obj = self._get_releases_latest_on_github()
