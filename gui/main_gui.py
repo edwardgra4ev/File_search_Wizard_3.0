@@ -122,6 +122,13 @@ class Ui_MainWindow(object):
         self.lineEdit_13.setObjectName("lineEdit_13")
         self.lineEdit_13.setPlaceholderText('Пример: "test, file". Результат: ["test.txt", "my_test.json", "file1.xml"]')
         self.formLayout_23.setWidget(1, QFormLayout.FieldRole, self.lineEdit_13)
+
+        self.standard_recursion = QCheckBox(self.scrollAreaWidgetContents)
+        self.lineEdit_13.setObjectName("checkBox_60")
+        self.formLayout_23.setWidget(2, QFormLayout.SpanningRole, self.standard_recursion)
+
+
+
         self.verticalLayout_34.addLayout(self.formLayout_23)
         self.groupBox_standard_file_format = QGroupBox(self.scrollAreaWidgetContents)
         self.groupBox_standard_file_format.setObjectName("groupBox_24")
@@ -283,6 +290,9 @@ class Ui_MainWindow(object):
         self.lineEdit_15.setObjectName("lineEdit_15")
         self.lineEdit_15.setPlaceholderText('Пример: "test, file". Результат: ["test.txt", "my_test.json", "file1.xml"]')
         self.formLayout_27.setWidget(1, QFormLayout.FieldRole, self.lineEdit_15)
+        self.recursion = QCheckBox(self.scrollAreaWidgetContents_2)
+        self.recursion.setObjectName("checkBox_61")
+        self.formLayout_27.setWidget(2, QFormLayout.SpanningRole, self.recursion)
         self.verticalLayout_40.addLayout(self.formLayout_27)
         self.verticalLayout_10.addLayout(self.verticalLayout_40)
         self.groupBox_18 = QGroupBox(self.scrollAreaWidgetContents_2)
@@ -395,6 +405,7 @@ class Ui_MainWindow(object):
         self.pushButton_search.setText(QCoreApplication.translate("MainWindow", "Поиск", None))
         self.checkBox_standard_date_modification.setText(QCoreApplication.translate("MainWindow", "Поиск по дате модификации файла", None))
         self.checkBox_standard_file_name.setText(QCoreApplication.translate("MainWindow", "Поиск с учетом имени файла", None))
+        self.standard_recursion.setText(QCoreApplication.translate("MainWindow", "Рекурсивый поиск файлов в директории", None))
         self.groupBox_standard_file_format.setTitle(QCoreApplication.translate("MainWindow", "Настройка форматов файла", None))
         self.checkBox_txt.setText(QCoreApplication.translate("MainWindow", ".txt", None))
         self.checkBox_log.setText(QCoreApplication.translate("MainWindow", ".log", None))
@@ -420,6 +431,7 @@ class Ui_MainWindow(object):
         self.checkBox_standard_search_str.setText(QCoreApplication.translate("MainWindow", "Показывать строку с искомым текстом", None))
         self.checkBox_standard_display_modification_date.setText(QCoreApplication.translate("MainWindow", "Показывать дату модификации файла", None))
         self.checkBox_date_modification.setText(QCoreApplication.translate("MainWindow", "Поиск по дате модификации файла", None))
+        self.recursion.setText(QCoreApplication.translate("MainWindow", "Рекурсивый поиск файлов в директории", None))
         self.checkBox_file_name.setText(QCoreApplication.translate("MainWindow", "Поиск с учетом имени файла", None))
         self.groupBox_18.setTitle(QCoreApplication.translate("MainWindow", "Настройки поиска", None))
         #self.groupBox_30.setTitle(QCoreApplication.translate("MainWindow", "Режим работы", None))

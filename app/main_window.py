@@ -204,6 +204,10 @@ class MainWindow(QtWidgets.QMainWindow, main_gui.Ui_MainWindow):
                 file_search_setting.update({"date": self.dateEdit_7.text()})
         else:
             file_search_setting.update({"date": False})
+        if self.standard_recursion.isChecked() is True:
+            file_search_setting.update({"recursion": True})
+        else:
+            file_search_setting.update({"recursion": False})
         # Добавляем файлы для проверки
         if self.checkBox_standard_file_name.isChecked() is True:
             in_file_name = self.lineEdit_13.text()
@@ -281,6 +285,10 @@ class MainWindow(QtWidgets.QMainWindow, main_gui.Ui_MainWindow):
                 file_search_setting.update({"date": self.dateEdit_8.text()})
         else:
             file_search_setting.update({"date": False})
+        if self.recursion.isChecked() is True:
+            file_search_setting.update({"recursion": True})
+        else:
+            file_search_setting.update({"recursion": False})
         # Добавляем файлы для проверки
         if self.checkBox_file_name.isChecked() is True:
             in_file_name = self.lineEdit_15.text()
