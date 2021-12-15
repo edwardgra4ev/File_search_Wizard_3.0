@@ -26,6 +26,5 @@ class UpdateForm(QtWidgets.QMainWindow, update_gui.UI_Form):
         self.progressBar.setValue(0)
         self.update._rename_file()
         self.update._download_new_version(self.progressBar)
-        Parser().save_last_update_time()
         os.startfile("File_search_Wizard_3.0.exe")
         sys.exit(1)

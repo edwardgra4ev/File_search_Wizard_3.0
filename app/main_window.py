@@ -22,6 +22,7 @@ class MainWindow(QtWidgets.QMainWindow, main_gui.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.current_date = QtCore.QDate()
         self.pre_launch_setup()
         self.path = None
         self.widget_error = None
@@ -57,13 +58,12 @@ class MainWindow(QtWidgets.QMainWindow, main_gui.Ui_MainWindow):
     def pre_launch_setup(self) -> None:
         self.setWindowIcon(QtGui.QIcon(':/icon/icon.ico'))
         self.version.setText("Версия: %s" % CONSTANT_VERSION)
-        current_date = QtCore.QDate()
         font = self.line_edit_search.font()
         font.setPointSize(15)
         self.line_edit_search.setFont(font)
         self.line_edit_search.setFocus()
         self.line_edit_search.setAlignment(QtCore.Qt.AlignCenter)
-        self.date_edit.setDate(current_date.currentDate())
+        self.date_edit.setDate(self.current_date.currentDate())
         self.line_edit_file_name.setPlaceholderText(
             'Пример: "test, file". Результат: ["test.txt", "my_test.json", "file1.xml"]')
         self.line_edit_files_format.setPlaceholderText('Пример: doc, docx, md')
@@ -310,13 +310,13 @@ class MainWindow(QtWidgets.QMainWindow, main_gui.Ui_MainWindow):
         file_search_setting = {}
         # Дата модификации файла
         if self.check_box_date_modification.isChecked() is True:
-            if self.dateEdit_7.date() > self.current_date.currentDate():
+            if self.date_edit.date() > self.current_date.currentDate():
                 self.widget_error = ShowError(text='Дата модификации файла не может быть больше текущей!',
                                               title='Ошибка валидации')
                 self.widget_error.show()
                 return
             else:
-                file_search_setting.update({"date": self.dateEdit_7.text()})
+                file_search_setting.update({"date": self.date_edit.text()})
         else:
             file_search_setting.update({"date": False})
         if self.check_box_recursion.isChecked() is True:
@@ -391,13 +391,13 @@ class MainWindow(QtWidgets.QMainWindow, main_gui.Ui_MainWindow):
         file_search_setting = {}
         # Дата модификации файла
         if self.check_box_date_modification.isChecked() is True:
-            if self.dateEdit_8.date() > self.current_date.currentDate():
+            if self.date_edit.date() > self.current_date.currentDate():
                 self.widget_error = ShowError(text='Дата модификации файла не может быть больше текущей!',
                                               title='Ошибка валидации')
                 self.widget_error.show()
                 return
             else:
-                file_search_setting.update({"date": self.dateEdit_8.text()})
+                file_search_setting.update({"date": self.date_edit.text()})
         else:
             file_search_setting.update({"date": False})
         if self.check_box_recursion.isChecked() is True:

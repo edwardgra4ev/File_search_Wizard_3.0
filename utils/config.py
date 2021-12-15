@@ -1,4 +1,4 @@
 
 
 THEMES = 'dark_teal.xml'
-CONSTANT_VERSION = '2.0.2'
+CONSTANT_VERSION = '2.0.3'
