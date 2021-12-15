@@ -352,7 +352,7 @@ class MainWindow(QtWidgets.QMainWindow, main_gui.Ui_MainWindow):
         if str_file_types != '':
             file_types_list = str_file_types.split(',')
             for types in file_types_list:
-                file_types.append(f'.{types.strip()}')
+                file_types.append(types.strip())
         if file_types == []:
             self.widget_error = ShowError(text='Необходимо указать хотя бы одно расшерение файла!',
                                           title='Ошибка валидации')
