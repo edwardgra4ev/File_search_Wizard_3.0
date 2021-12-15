@@ -19,6 +19,10 @@ class SearchingTextForFile(object):
             "4": self._search_at_the_end_of_line,
             "5": self._case_insensitive_search,
         }
+        if type_search != "5":
+            symbols = '/[^\p{L},\s]/u()'
+            for i in symbols:
+                search_text = search_text.replace(i, f"\\{i}")
         self.files_path = files_path
         self.search_text = search_text
         self.type_search = type_search
