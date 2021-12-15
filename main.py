@@ -41,6 +41,7 @@ def search_old_version_app_and_remove():
     """Находим старую версию и удаляем ее"""
     try:
         if os.path.isfile("File_search_Wizard_3.0_OLD_VERSION.exe") is True:
+            elevate(show_console=False)
             os.remove('File_search_Wizard_3.0_OLD_VERSION.exe')
     except FileNotFoundError as err:
         show_error_form("Ошибка удаления старой версии файла!", str(err))
@@ -58,7 +59,6 @@ def check_new_version():
 def main():
     # Запросить права администратора
     try:
-        elevate(show_console=False)
         search_old_version_app_and_remove()
         if check_new_version() is None:
             show_main_window()
