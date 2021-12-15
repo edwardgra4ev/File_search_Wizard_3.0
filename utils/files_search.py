@@ -55,12 +55,12 @@ class SearchForFileInTheDirectory(object):
             if re.search(r"\.({})".format(format), file):
                 if self.file_search_setting.get("file_name") is False:
                     file_modification_date = datetime.datetime.fromtimestamp(os.path.getmtime(file))
-                    files_and_modification_date.update({file: str(file_modification_date)})
+                    files_and_modification_date.update({file.replace('\\', '/'): str(file_modification_date)})
                 else:
                     for fl in self.file_search_setting.get("file_name"):
                         if fl in file.split('\\')[-1]:
                             file_modification_date = datetime.datetime.fromtimestamp(os.path.getmtime(file))
-                            files_and_modification_date.update({file: str(file_modification_date)})
+                            files_and_modification_date.update({file.replace('\\', '/'): str(file_modification_date)})
                             break
         return files_and_modification_date
 
