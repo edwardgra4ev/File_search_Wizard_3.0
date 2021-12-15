@@ -19,10 +19,6 @@ class SearchingTextForFile(object):
             "4": self._search_at_the_end_of_line,
             "5": self._case_insensitive_search,
         }
-        if type_search != "5":
-            symbols = '/[^\p{L},\s]/u()'
-            for i in symbols:
-                search_text = search_text.replace(i, f"\\{i}")
         self.files_path = files_path
         self.search_text = search_text
         self.type_search = type_search
@@ -33,13 +29,13 @@ class SearchingTextForFile(object):
         """
         Поиск без учета регистра
         """
-        return len(re.findall(self.search_text.upper(), text.upper()))
+        return text.upper().count(self.search_text.upper())
 
     def _case_insensitive_search(self, text: str) -> int:
         """
         Поиск с учетом регистра, так же используеться при поиске регулярным выражением
         """
-        return len(re.findall(self.search_text, text))
+        return text.count(self.search_text)
 
     def _search_at_the_beginning_of_line(self, text: str) -> int:
         """
